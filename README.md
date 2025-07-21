@@ -6,7 +6,7 @@ The contest mirrors a real score‑card lifecycle where **feature drift** can si
 
 ---
 
-## 1 Competition Snapshot  
+## 1&ensp;Competition Snapshot  
 
 | Item | Detail |
 |------|--------|
@@ -18,9 +18,9 @@ The contest mirrors a real score‑card lifecycle where **feature drift** can si
 
 ---
 
-## 2 Dataset Overview  
+## 2&ensp;Dataset Overview  
 
-### 2.1 Depth Taxonomy  
+### 2.1&ensp;Depth Taxonomy  
 
 | Depth | Grain | Example tables | Join keys |
 |-------|-------|----------------|-----------|
@@ -32,7 +32,7 @@ Key columns: `date_decision`, `WEEK_NUM`, `MONTH`, and `target` (train only).
 
 ---
 
-## 3 Evaluation – Gini Stability  
+## 3&ensp;Evaluation – Gini Stability  
 
 1. Compute **Gini** for every `WEEK_NUM`.  
 2. Fit a regression over weekly Ginis; penalise **negative slope**.  
@@ -42,7 +42,7 @@ High AUC **and** low drift win.
 
 ---
 
-## 4 Timeline  
+## 4&ensp;Timeline  
 
 * **Start**  05 Feb 2024  
 * **Entry / Team merge**  20 May 2024  
@@ -50,27 +50,27 @@ High AUC **and** low drift win.
 
 ---
 
-## 5 Feature‑Engineering Pipeline  
+## 5&ensp;Feature‑Engineering Pipeline  
 
-### 5.1 Depth 0 (static)  
+### 5.1&ensp;Depth 0 (static)  
 * Parse `date_decision` plus ~200 *_D columns to epoch‑days.  
 * Cast booleans → `Int32`; drop free‑text; one‑hot `education_1103M`, `maritalst_385M`.
 
-### 5.2 Depth 1 (history)  
+### 5.2&ensp;Depth 1 (history)  
 * **Lazy Polars** streams parquet batches (< 4 GB RAM).  
 * Per‑table aggregates (mean/sum/min/max/`n_unique`) for amounts, DPDs, flags.  
 * Durations such as `approval_to_activation`.
 
-### 5.3 Depth 2 (deep history)  
+### 5.3&ensp;Depth 2 (deep history)  
 * Two‑stage aggregation `(case_id, num_group1)` → `case_id` for collaterals & payments.  
 * Total after join: **453 numeric + categorical** features.
 
-### 5.4 Memory Discipline  
+### 5.4&ensp;Memory Discipline  
 * Each depth writes parquet checkpoints to disk and reloads for the next join, staying within Kaggle RAM.
 
 ---
 
-## 6 Modelling & Training  
+## 6&ensp;Modelling & Training  
 
 | Item | Setting |
 |------|---------|
@@ -80,7 +80,7 @@ High AUC **and** low drift win.
 | **CV split** | 80 / 20 chronological |
 | **Validation AUC** | **0.8318** |
 
-### 6.1 Inference  
+### 6.1&ensp;Inference  
 
 * Rebuild test features (Depth 0‑2).  
 * **Chunked prediction** in blocks of 25 k rows → keeps < 12 GB RAM.  
@@ -89,7 +89,7 @@ High AUC **and** low drift win.
 
 ---
 
-## 7 Leaderboard Results  
+## 7&ensp;Leaderboard Results  
 
 | Notebook (version) | Model | Public LB | Private LB |
 |--------------------|-------|-----------|------------|
@@ -99,7 +99,7 @@ High AUC **and** low drift win.
 
 ---
 
-## 8 Key Learnings  
+## 8&ensp;Key Learnings  
 
 * **Polars lazy + parquet** is a lifesaver for multi‑table ETL under tight RAM.  
 * Hierarchical aggregation compressed 2 k + raw columns to 453 features with minimal signal loss.  
@@ -108,7 +108,7 @@ High AUC **and** low drift win.
 
 ---
 
-## 9 Next Steps  
+## 9&ensp;Next Steps  
 
 1. Implement custom LightGBM loss combining AUC + stability regulariser.  
 2. Target encoding for high‑cardinality masks.  
@@ -117,7 +117,7 @@ High AUC **and** low drift win.
 
 ---
 
-## 10 Acknowledgements  
+## 10&ensp;Acknowledgements  
 
 Thanks to **Home Credit** for releasing a production‑scale credit dataset and to the Kaggle community for memory‑saving tricks.
 
